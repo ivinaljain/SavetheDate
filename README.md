@@ -26,3 +26,6 @@ Build a mobile app version
 Add automatic calendar syncing
 
 Support batch uploads for multiple events at once
+
+![image](https://github.com/user-attachments/assets/4f91f07a-8302-4bd7-a6a7-85863dd4d845)
+
