@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Capture Image (Back Camera)</title>
+    <style>
+        body{font-family:Arial,Helvetica,sans-serif;text-align:center;margin-top:2rem}
+        video,canvas{border:2px solid #222;border-radius:8px;margin-top:1rem}
+        #status{color:#d00;margin-top:.75rem}
+        button{margin:.5rem .25rem;padding:.5rem 1.2rem;font-size:1rem}
+    </style>
+</head>
+<body>
+    <h1>Capture Image (Back Camera)</h1>
+
+    <!-- live preview -->
+    <video id="video" width="640" height="480" autoplay muted playsinline></video><br>
+
+    <button id="capture" disabled>Capture & Upload</button><br>
+
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+    <div id="status"></div>
+
+    <script>
+        const video      = document.getElementById('video');
+        const canvas     = document.getElementById('canvas');
+        const captureBtn = document.getElementById('capture');
+        const statusBox  = document.getElementById('status');
+
+        let stream = null;
+
+        /* Try to force back (environment) camera first; fallback to any camera */
+        async function startBackCamera(){
+            // stop previous stream
+            if(stream) stream.getTracks().forEach(t=>t.stop());
+
+            const primary = { video:{ facingMode:{ exact:'environment'} }, audio:false };
+            const fallback= { video:true , audio:false };
+            try{
+                stream = await navigator.mediaDevices.getUserMedia(primary);
+            }catch(err){
+                console.warn('Back camera not found, falling back to default:', err);
+                stream = await navigator.mediaDevices.getUserMedia(fallback);
+            }
+            video.srcObject = stream;
+            await video.play();
+            captureBtn.disabled = false;
+        }
+
+        // initialise
+        (async()=>{
+            try{ await startBackCamera(); }
+            catch(err){
+                console.error(err);
+                statusBox.textContent='❌ Cannot access camera: '+err.message;
+            }
+        })();
+
+        /* Capture & upload */
+        captureBtn.addEventListener('click', ()=>{
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video,0,0,canvas.width,canvas.height);
+            canvas.style.display='block';
+            canvas.toBlob(async(blob)=>{
+                statusBox.textContent='⏳ Uploading…';
+                const fd=new FormData();
+                fd.append('file',blob,'capture.png');
+                try{
+                    const res=await fetch('/process_image',{method:'POST',body:fd});
+                    const j=await res.json();
+                    statusBox.textContent='✅ '+j.message;
+                }catch(e){
+                    console.error('Upload failed',e);
+                    statusBox.textContent='❌ Upload failed';
+                }
+            },'image/png');
+        });
+    </script>
+</body>
+</html>
