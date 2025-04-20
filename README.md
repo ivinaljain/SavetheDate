@@ -1,5 +1,5 @@
 # SavetheDate
-Inspiration I kept missing awesome UTD events, even though I’d snap pics of the posters in the hallway. I figured—why not turn those images into calendar events automatically?
+1. Inspiration I kept missing awesome UTD events, even though I’d snap pics of the posters in the hallway. I figured—why not turn those images into calendar events automatically?
 
 What it does Save the Date! takes a picture of an event poster and converts it into an .ics calendar file, so you can easily add it to your calendar and never miss out.
 
@@ -13,13 +13,13 @@ Integrating OpenAI for smart text extraction
 
 Getting the .ics format right for cross-platform compatibility
 
-What we learned How .ics files work under the hood
+2. What we learned How .ics files work under the hood
 
 Best practices for working with image-to-text models
 
 Integrating different tools and APIs into a seamless workflow
 
-What's next for Save the Date! Add OCR for handwritten posters
+3. What's next for Save the Date! Add OCR for handwritten posters
 
 Build a mobile app version
 
